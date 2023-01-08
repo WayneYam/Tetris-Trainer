@@ -1,6 +1,8 @@
 #include "settings.h"
 
+
 void Settings::Init(){ // Initializes Settings
+
 	keybind.resize(kMaxKeybind);
 	handling.resize(kMaxHandling);
 

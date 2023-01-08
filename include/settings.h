@@ -30,6 +30,8 @@ public:
 		kMaxHandling
 	};
 	
+	static int foo;
+
 	static void Init();
 	static void ChangeKeybind(Keybind option, sf::Keyboard::Key newValue);
 	static void ChangeHandling(Handling option, HandlingType newValue);
@@ -43,5 +45,9 @@ private:
 	static std::vector<sf::Keyboard::Key> keybind;
 	static std::vector<HandlingType> handling;
 };
+
+int Settings::foo{3};
+std::vector<sf::Keyboard::Key> Settings::keybind = {};
+std::vector<Settings::HandlingType> Settings::handling = {};
 
 #endif
