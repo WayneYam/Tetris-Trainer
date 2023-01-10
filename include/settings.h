@@ -29,25 +29,24 @@ public:
 
 		kMaxHandling
 	};
-	
-	static int foo;
 
-	static void Init();
-	static void ChangeKeybind(Keybind option, sf::Keyboard::Key newValue);
-	static void ChangeHandling(Handling option, HandlingType newValue);
-	static sf::Keyboard::Key GetKeybind(Keybind option);
-	static HandlingType GetHandling(Handling option);
+	void changeKeybind(Keybind option, sf::Keyboard::Key newValue);
+	void changeHandling(Handling option, HandlingType newValue);
+	sf::Keyboard::Key getKeybind(Keybind option);
+	HandlingType getHandling(Handling option);
 
 
 private:
-	Settings(){} // disables instantiation
+	std::vector<sf::Keyboard::Key> keybind;
+	std::vector<HandlingType> handling;
 
-	static std::vector<sf::Keyboard::Key> keybind;
-	static std::vector<HandlingType> handling;
+public: 
+	Settings(){
+		keybind.resize(kMaxKeybind);
+		handling.resize(kMaxHandling);
+	}
 };
 
-int Settings::foo{3};
-std::vector<sf::Keyboard::Key> Settings::keybind = {};
-std::vector<Settings::HandlingType> Settings::handling = {};
+static Settings settings;
 
 #endif

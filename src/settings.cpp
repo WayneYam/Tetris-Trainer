@@ -1,28 +1,19 @@
 #include "settings.h"
 
-
-void Settings::Init(){ // Initializes Settings
-
-	keybind.resize(kMaxKeybind);
-	handling.resize(kMaxHandling);
-
-	// TODO: default settings
-}
-
-void Settings::ChangeKeybind(Keybind option, sf::Keyboard::Key newValue){
-	keybind[static_cast<int>(option)] = newValue;
+void Settings::changeKeybind(Keybind option, sf::Keyboard::Key newValue){
+	this->keybind[static_cast<int>(option)] = newValue;
 
 	// TODO: check keybind collision
 }
 
-void Settings::ChangeHandling(Handling option, HandlingType newValue){
-	handling[static_cast<int>(option)] = newValue;	
+void Settings::changeHandling(Handling option, HandlingType newValue){
+	this->handling[static_cast<int>(option)] = newValue;	
 }
 
-sf::Keyboard::Key Settings::GetKeybind(Keybind option){
-	return keybind[static_cast<int>(option)];
+sf::Keyboard::Key Settings::getKeybind(Keybind option){
+	return this->keybind[static_cast<int>(option)];
 }
 
-Settings::HandlingType Settings::GetHandling(Handling option){
-	return handling[static_cast<int>(option)];	
+Settings::HandlingType Settings::getHandling(Handling option){
+	return this->handling[static_cast<int>(option)];	
 }
