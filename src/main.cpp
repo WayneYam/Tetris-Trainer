@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "settings.h"
 
 int main()
 {
+	
 
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
     sf::CircleShape shape(50.f);
