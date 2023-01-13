@@ -19,8 +19,8 @@ public:
 	const static inline Action nullAction{[](){}};
 
 private:
-	bool active{false};
-	int priority{0};
+	bool active{false}; // Whether this object is interactable
+	int priority{0};    // Decides which object activates when overlapping
 	State state{kNull};	
 
 public:
@@ -30,14 +30,15 @@ public:
 	Action onPress{nullAction};  	// While object is pressed
 	Action onRelease{nullAction};	// When mouse button is released
 
-	Interactable(const sf::Texture& texture, const sf::IntRect& rectangle, int pri, Action hover, Action exits, Action click, Action press, Action released) 
-	: sf::Sprite(texture, rectangle), priority(pri), onHover(hover), onExit(exits), onClick(click), onPress(press), onRelease(released) {}
-	Interactable(const sf::Texture& texture, const sf::IntRect& rectangle, int pri) 
-	: Interactable(texture, rectangle, pri, nullAction, nullAction, nullAction, nullAction, nullAction) {}
-	Interactable(const sf::Texture& texture, int pri) : Interactable(texture, sf::IntRect(), pri) {}
-	Interactable(int pri) : Interactable(sf::Texture() ,pri) {}
-	Interactable() : Interactable(0) {}
-
+	Interactable(Action hover = nullAction
+			   , Action exits = nullAction
+			   , Action click = nullAction
+			   , Action press = nullAction
+			   , Action released = nullAction
+			   , int pri = 0
+			   , const sf::Texture& texture = sf::Texture()
+			   , const sf::IntRect& rectangle = sf::IntRect()) 
+			: sf::Sprite(texture, rectangle), active{false}, priority{pri}, state{kNull}, onHover(hover) , onExit(exits) , onClick(click) , onPress(press) , onRelease(released) {}
 
 	bool inBound(sf::Vector2f v); 	// Checks whether a position is in bound
 };

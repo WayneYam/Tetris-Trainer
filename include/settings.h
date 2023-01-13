@@ -9,7 +9,6 @@ class Settings{
 public:
 	typedef int HandlingType;
 	enum Keybind{ // keybinds of the game
-
 		kMoveLeft,
 		kMoveRight,
 		kSoftDrop,
@@ -18,7 +17,6 @@ public:
 		kRotationCCW, // Counter-Clockwise Rotation
 		kRotation180,
 		kHold,
-
 		kMaxKeybind
 	};
 
@@ -26,7 +24,6 @@ public:
 		kDAS, // Delayed Auto Shift
 		kARR, // Auto Repeat Rate
 		kSDF, // Soft Drop Factor
-
 		kMaxHandling
 	};
 
@@ -34,7 +31,6 @@ public:
 	void changeHandling(Handling option, HandlingType newValue);
 	sf::Keyboard::Key getKeybind(Keybind option);
 	HandlingType getHandling(Handling option);
-
 
 private:
 	std::vector<sf::Keyboard::Key> keybind;
