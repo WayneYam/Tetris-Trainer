@@ -5,7 +5,7 @@
 #include <string>
 
 
-class Button : public Interactable {
+class Button : public InteractableManager::Interactable {
 	private:
 		std::string caption;
 
@@ -14,7 +14,7 @@ class Button : public Interactable {
 		Button(
 			  const std::string &text
 			, const Action &hover = nullAction
-			, const Action &exits = nullAction
+			, const Action &leave = nullAction
 			, const Action &click = nullAction
 			, const Action &press = nullAction
 			, const Action &released = nullAction
@@ -22,7 +22,7 @@ class Button : public Interactable {
 			, const sf::Texture& texture = sf::Texture()
 			, const sf::IntRect& rectangle = sf::IntRect()) 
 
-			: Interactable(hover, exits, click, press, released, pri, texture, rectangle), caption{text} {}
+			: InteractableManager::Interactable(hover, leave, click, press, released, pri, texture, rectangle), caption{text} {}
 		
 		void setCaption (const std::string &newCaption);
 };

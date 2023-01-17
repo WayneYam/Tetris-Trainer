@@ -3,7 +3,7 @@
 
 #include "interactable.h"
 
-class Checkbox : public Interactable {
+class Checkbox : public InteractableManager::Interactable {
 	private:
 		bool ticked{false};
 	public:
@@ -18,7 +18,7 @@ class Checkbox : public Interactable {
 			, const sf::Texture& texture = sf::Texture()
 			, const sf::IntRect& rectangle = sf::IntRect()) 
 
-			: Interactable(hover, exits, click, press, released, pri, texture, rectangle), ticked{false} {}
+			: InteractableManager::Interactable(hover, exits, click, press, released, pri, texture, rectangle), ticked{false} {}
 
 		void tick();
 };
