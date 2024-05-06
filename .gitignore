@@ -2,4 +2,4 @@
 *.o
 *.d
 output/
-compile_flags.txt
+compile-flags.txt
