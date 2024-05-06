@@ -3,33 +3,36 @@
 
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include <vector>
+
+enum class Keybind {
+    move_left,
+    soft_drop,
+    move_right,
+    hard_drop,
+    rot_ccw,
+    rot_180,
+    rot_cw,
+    swap,
+    reset,
+};
+
+enum class Timing{
+    DAS,
+    ARR,
+    SDD,
+};
+
+enum class Option{
+    ghost,
+};
+
+sf::Keyboard::Key get_keybind(Keybind k);
+sf::Time get_timing(Timing t);
+int get_option(Option o);
 
 namespace config{
-
-const std::vector<sf::Keyboard::Key> motion = {
-    sf::Keyboard::A, // move left
-    sf::Keyboard::S, // soft drop
-    sf::Keyboard::D, // move right
-};
-
-const std::vector<sf::Keyboard::Key> keybind = {
-    sf::Keyboard::Space, // hard drop
-    sf::Keyboard::J, // ccw
-    sf::Keyboard::K, // 180
-    sf::Keyboard::L, // cw
-    sf::Keyboard::LShift, // hold
-    sf::Keyboard::F4, // restart
-};
-
-const auto DAS = sf::Time(sf::milliseconds(133));
-const auto ARR = sf::Time(sf::milliseconds(0));
-const auto SDD = sf::Time(sf::milliseconds(0)); // soft drop delay, inverse of SDF
-
-const bool ghost = 1; // draw ghost piece
-
+const int motion_num = 3; // only the first three do we care about long press
 }
-
 
 
 #endif

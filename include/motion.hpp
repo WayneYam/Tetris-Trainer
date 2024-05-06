@@ -1,7 +1,8 @@
 #ifndef MOTION_H
 #define MOTION_H
 
-void motion_register(int type, int status);
+#include "config.hpp"
+void motion_register(Keybind k, int status);
 void do_motion();
 
 #endif

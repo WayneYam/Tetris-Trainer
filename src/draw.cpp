@@ -9,10 +9,21 @@
 #include "config.hpp"
 #include "board.hpp"
 
+const std::vector<sf::Color> color_list {
+    sf::Color(255, 0, 0)  , // Z
+    sf::Color(255, 128, 0), // L
+    sf::Color(255, 255, 0), // O
+    sf::Color(0, 255, 0)  , // S
+    sf::Color(0, 255, 255), // I
+    sf::Color(0, 0, 255)  , // J
+    sf::Color(127, 0, 255), // T
+    sf::Color(64, 64, 64)   // garbage
+};
+
 const int N = row_number, M = column_number; // board row/column
-const int sz = cell_size;
-const sf::Vector2f pos = upper_left_position;
-const sf::Color grid = gridline_color;
+const int sz = 30;
+const sf::Vector2f pos(150, 150);
+const sf::Color grid(64, 64, 64);
 
 
 sf::Color get_color(int c){
@@ -45,7 +56,7 @@ void draw_board(sf::RenderWindow &window){
         for(int j = 0; j < M; j++){
             sf::RectangleShape cur (sf::Vector2f(sz - 2, sz - 2));
             sf::Color cur_color = get_color(board[i+3][j]);
-            if(config::ghost && board[i+3][j] >= 10){
+            if(get_option(Option::ghost) && board[i+3][j] >= 10){
                 cur_color = get_color(board[i+3][j] - 10);
                 cur_color.a = 64;
             }

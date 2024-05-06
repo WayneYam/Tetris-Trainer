@@ -29,19 +29,17 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased){
-                for(int i = 0; i < (int)config::motion.size(); i++){
-                    if(event.key.code == config::motion[i]) {
-                        motion_register(i, (event.type == sf::Event::KeyPressed ? 1 : -1)); 
-                    }
-                }
+                int status = event.type == sf::Event::KeyPressed ? 1 : -1;
+                for (Keybind motion : {Keybind::move_left, Keybind::move_right, Keybind::soft_drop})
+                    if(event.key.code == get_keybind(motion)) motion_register(motion, status);
             }
             if (event.type == sf::Event::KeyPressed){
-                if(event.key.code == config::keybind[0]) hard_drop();
-                if(event.key.code == config::keybind[1]) rotate_piece(3);
-                if(event.key.code == config::keybind[2]) rotate_piece(2);
-                if(event.key.code == config::keybind[3]) rotate_piece(1);
-                if(event.key.code == config::keybind[4]) swap_piece();
-                if(event.key.code == config::keybind[5]) reset();
+                if(event.key.code == get_keybind(Keybind::hard_drop)) hard_drop();
+                if(event.key.code == get_keybind(Keybind::rot_ccw)) rotate_piece(3);
+                if(event.key.code == get_keybind(Keybind::rot_180)) rotate_piece(2);
+                if(event.key.code == get_keybind(Keybind::rot_cw)) rotate_piece(1);
+                if(event.key.code == get_keybind(Keybind::swap)) swap_piece();
+                if(event.key.code == get_keybind(Keybind::reset)) reset();
             }
         }
 

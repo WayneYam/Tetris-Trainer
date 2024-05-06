@@ -8,8 +8,6 @@ const int N = row_number;
 const int M = column_number;
 Board B(N + 3, std::vector<int>(M, -1));
 
-
-
 Tiles get_dis(int c, int rotation){ // get displacement
 
     std::vector<std::vector<Tiles>> table = 
@@ -83,7 +81,7 @@ struct Piece{
     }
 
     void put(){
-        if(config::ghost) {
+        if(get_option(Option::ghost)) {
             Piece ghost = *this;
             if(ghost.valid()){
                 while(ghost.valid()) ghost.px++;
@@ -102,7 +100,7 @@ struct Piece{
         for(auto [x, y] : get_tiles()){
             B[x][y] = -1;
         }
-        if(config::ghost) {
+        if(get_option(Option::ghost)) {
             Piece ghost = *this;
             if(ghost.valid()){
                 while(ghost.valid()) ghost.px++;
