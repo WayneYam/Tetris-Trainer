@@ -62,7 +62,7 @@ void draw_piece(sf::RenderWindow &window, int t, sf::Vector2f pos, float size){
 
     float offx;
     float offy = size / 4;
-    if(t == 1 || t == 5){
+    if(t == 1 || t == 5 || t == 0 || t == 3 || t == 6){
         offx = size / 8; 
     } else{
         offx = 0;

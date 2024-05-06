@@ -13,7 +13,7 @@ void reset(){
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(600, 800), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(600, 800), "Tetris Trainer");
     window.setKeyRepeatEnabled(false);
 
 	// sf::Texture texture;
