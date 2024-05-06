@@ -19,6 +19,8 @@ int main()
 	// sf::Texture texture;
 	// texture.loadFromFile("resources/blockskin.png");
 
+    read_config();
+
     init_board();
 
     while (window.isOpen())

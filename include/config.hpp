@@ -14,6 +14,7 @@ enum class Keybind {
     rot_cw,
     swap,
     reset,
+    config,
 };
 
 enum class Timing{
@@ -29,6 +30,9 @@ enum class Option{
 sf::Keyboard::Key get_keybind(Keybind k);
 sf::Time get_timing(Timing t);
 int get_option(Option o);
+
+void write_config();
+void read_config();
 
 namespace config{
 const int motion_num = 3; // only the first three do we care about long press
