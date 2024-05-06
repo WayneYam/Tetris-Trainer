@@ -3,6 +3,8 @@
 
 #include "types.hpp"
 
+Tiles get_dis(int c, int rotation); 
+
 void reset_board();
 Board getBoard();
 void init_piece(int c);

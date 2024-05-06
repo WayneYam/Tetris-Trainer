@@ -6,6 +6,8 @@
 #include "const.hpp"
 #include "types.hpp"
 
-void draw_board(sf::RenderWindow &window, const Board &board);
+void draw_board(sf::RenderWindow &window);
+void draw_queue(sf::RenderWindow &window);
+void draw_hold_piece(sf::RenderWindow &window);
 
 #endif

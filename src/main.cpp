@@ -48,11 +48,9 @@ int main()
         do_motion();
 
         window.clear();
-        Board board = getBoard();
-
-        draw_board(window, board);
-        sf::sleep(sf::Time(sf::seconds(0.1)));
-       
+        draw_board(window);
+        draw_queue(window);
+        draw_hold_piece(window);
 
         window.display();
     }

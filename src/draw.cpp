@@ -6,6 +6,8 @@
 #include "const.hpp"
 #include "types.hpp"
 #include "queue.hpp"
+#include "config.hpp"
+#include "board.hpp"
 
 const int N = row_number, M = column_number; // board row/column
 const int sz = cell_size;
@@ -18,7 +20,8 @@ sf::Color get_color(int c){
     return sf::Color(0, 0, 0);
 }
 
-void draw_board(sf::RenderWindow &window, const Board &board){
+void draw_board(sf::RenderWindow &window){
+    Board board = getBoard();
 
     // draw row line
     for(int i = 0; i <= N; i++){
@@ -42,11 +45,60 @@ void draw_board(sf::RenderWindow &window, const Board &board){
         for(int j = 0; j < M; j++){
             sf::RectangleShape cur (sf::Vector2f(sz - 2, sz - 2));
             sf::Color cur_color = get_color(board[i+3][j]);
+            if(config::ghost && board[i+3][j] >= 10){
+                cur_color = get_color(board[i+3][j] - 10);
+                cur_color.a = 64;
+            }
             cur.setFillColor(cur_color);
             cur.setPosition(pos.x + j*sz + 1, pos.y + i*sz + 1);
             window.draw(cur);
         }
     }
+
+}
+
+void draw_piece(sf::RenderWindow &window, int t, sf::Vector2f pos, float size){
+    // Z L O S I J T
+
+    float offx;
+    float offy = size / 4;
+    if(t == 1 || t == 5){
+        offx = size / 8; 
+    } else{
+        offx = 0;
+    }
+
+    pos += sf::Vector2f(offx, offy);
+
+    for(auto [x, y] : get_dis(t, 0)){
+        sf::RectangleShape cur (sf::Vector2f(size/4 - 2, size/4 - 2));
+        sf::Color cur_color = get_color(t);
+        cur.setFillColor(cur_color);
+        cur.setPosition(pos.x + y*size/4 + 1, pos.y + x*size/4 + 1);
+        window.draw(cur);
+    }
+}
+
+void draw_queue(sf::RenderWindow &window){
+
+    sf::Vector2f queue_position(475, 150);
+    float piece_size = 80;
+
+    std::deque<int> queue = get_queue();
+    for(int i = 0; i < 5; i++){
+        auto current_position = queue_position;
+        current_position.y += i * piece_size;
+        draw_piece(window, queue[i], current_position, piece_size);
+    }
+}
+
+void draw_hold_piece(sf::RenderWindow &window){
+
+    sf::Vector2f hold_position(50, 400);
+    float piece_size = 80;
+
+    int t = get_hold_piece();
+    if(t != -1) draw_piece(window, t, hold_position, piece_size);
 }
 
 

@@ -25,6 +25,9 @@ const std::vector<sf::Keyboard::Key> keybind = {
 const auto DAS = sf::Time(sf::milliseconds(133));
 const auto ARR = sf::Time(sf::milliseconds(0));
 const auto SDD = sf::Time(sf::milliseconds(0)); // soft drop delay, inverse of SDF
+
+const bool ghost = 1; // draw ghost piece
+
 }
 
 

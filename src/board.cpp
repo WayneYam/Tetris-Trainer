@@ -1,6 +1,7 @@
 #include "types.hpp"
 #include "const.hpp"
 #include "queue.hpp"
+#include "config.hpp"
 #include <utility>
 
 const int N = row_number;
@@ -8,7 +9,6 @@ const int M = column_number;
 Board B(N + 3, std::vector<int>(M, -1));
 
 
-using Tiles = std::vector<std::pair<int, int> >;
 
 Tiles get_dis(int c, int rotation){ // get displacement
 
@@ -69,7 +69,7 @@ Tiles get_dis(int c, int rotation){ // get displacement
 }
 
 bool valid_position(int x, int y){
-    return 0 <= x && x < N + 3 && 0 <= y && y < M && B[x][y] == -1;
+    return 0 <= x && x < N + 3 && 0 <= y && y < M && (B[x][y] == -1 || B[x][y] >= 10);
 }
 
 struct Piece{
@@ -81,7 +81,19 @@ struct Piece{
         }
         return dis;
     }
+
     void put(){
+        if(config::ghost) {
+            Piece ghost = *this;
+            if(ghost.valid()){
+                while(ghost.valid()) ghost.px++;
+                ghost.px--;
+                for(auto [x, y] : ghost.get_tiles()){
+                    B[x][y] = t + 10;
+                }
+            }
+        }
+
         for(auto [x, y] : get_tiles()){
             B[x][y] = t;
         }
@@ -89,6 +101,16 @@ struct Piece{
     void take(){
         for(auto [x, y] : get_tiles()){
             B[x][y] = -1;
+        }
+        if(config::ghost) {
+            Piece ghost = *this;
+            if(ghost.valid()){
+                while(ghost.valid()) ghost.px++;
+                ghost.px--;
+                for(auto [x, y] : ghost.get_tiles()){
+                    B[x][y] = -1;
+                }
+            }
         }
     }
     bool valid(){
@@ -138,14 +160,15 @@ bool rotate_piece(int cnt){
     
     Tiles test;
     if(current_piece.t == 4){ // I
-        if(cr == 0 && nr == 1) test = {{0, 0}, { 1, 0}, {-2,  0}, { 1, -2}, {-2,  1}};
-        if(cr == 1 && nr == 0) test = {{0, 0}, {-1, 0}, { 2,  0}, {-1,  2}, { 2, -1}};
-        if(cr == 1 && nr == 2) test = {{0, 0}, {-1, 0}, { 2,  0}, {-1, -2}, { 2,  1}};
-        if(cr == 2 && nr == 1) test = {{0, 0}, {-2, 0}, { 1,  0}, {-2, -1}, { 1,  2}};
-        if(cr == 2 && nr == 3) test = {{0, 0}, { 2, 0}, {-1,  0}, { 2, -1}, {-1,  2}};
-        if(cr == 3 && nr == 2) test = {{0, 0}, { 1, 0}, {-2,  0}, { 1, -2}, {-2,  1}};
-        if(cr == 3 && nr == 0) test = {{0, 0}, { 1, 0}, {-2,  0}, { 1,  2}, {-2, -1}};
-        if(cr == 0 && nr == 3) test = {{0, 0}, {-1, 0}, { 2,  0}, {-1, -2}, { 2,  1}};
+        // tetrio SRS+ kick table
+        if(cr == 0 && nr == 1) test = {{0, 0}, { 1, 0}, {-2,  0}, { 1,  2}, {-2, -1}};
+        if(cr == 1 && nr == 0) test = {{0, 0}, {-1, 0}, { 2,  0}, {-1, -2}, { 2,  1}};
+        if(cr == 1 && nr == 2) test = {{0, 0}, {-1, 0}, { 2,  0}, {-1,  2}, { 2, -1}};
+        if(cr == 2 && nr == 1) test = {{0, 0}, {-2, 0}, { 1,  0}, {-2,  1}, { 1, -2}};
+        if(cr == 2 && nr == 3) test = {{0, 0}, { 2, 0}, {-1,  0}, { 2,  1}, {-1, -2}};
+        if(cr == 3 && nr == 2) test = {{0, 0}, { 1, 0}, {-2,  0}, { 1,  2}, {-2, -1}};
+        if(cr == 3 && nr == 0) test = {{0, 0}, { 1, 0}, {-2,  0}, { 1, -2}, {-2,  1}};
+        if(cr == 0 && nr == 3) test = {{0, 0}, {-1, 0}, { 2,  0}, {-1,  2}, { 2, -1}};
 
         // 180 spin on tetrio
         if(cr == 0 && nr == 2) test = {{0, 0}, { 0,-1}};

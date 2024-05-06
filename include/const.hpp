@@ -8,8 +8,8 @@
 const int row_number = 20;
 const int column_number = 10;
 const int cell_size = 30;
-const sf::Vector2f upper_left_position(100, 100);
-const sf::Color gridline_color (255, 255, 255);
+const sf::Vector2f upper_left_position(150, 150);
+const sf::Color gridline_color (64, 64, 64);
 
 const std::vector<sf::Color> color_list {
     sf::Color(255, 0, 0),

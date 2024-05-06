@@ -10,9 +10,9 @@ std::vector<std::pair<int, sf::Clock> > status(config::motion.size());
 
 void motion_register(int t, int s){
     if(s == 1){
-        if(t == 0) move_piece(2);
+        if(t == 0) move_piece(2), status[2].second.restart();
         if(t == 1) move_piece(3);
-        if(t == 2) move_piece(0);
+        if(t == 2) move_piece(0), status[0].second.restart();
     }
     status[t].first = s;
     if(s == 1) status[t].second.restart();
