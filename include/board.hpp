@@ -7,6 +7,7 @@ Tiles get_dis(int c, int rotation);
 
 void reset_board();
 void reset();
+void undo();
 Board getBoard();
 void init_piece(int c);
 bool move_piece(int dir);

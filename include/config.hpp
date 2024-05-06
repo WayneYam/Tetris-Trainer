@@ -15,6 +15,7 @@ enum class Keybind {
     swap,
     reset,
     config,
+    undo,
 };
 
 enum class Timing{

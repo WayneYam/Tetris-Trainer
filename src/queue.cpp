@@ -33,6 +33,13 @@ std::deque<int> get_queue(){
     return queue;
 }
 
+void put_queue(std::deque<int> v){
+    while(v.size()){
+        queue.push_front(v.back());
+        v.pop_back();
+    }
+}
+
 void reset_queue(){
     queue.clear();
 }

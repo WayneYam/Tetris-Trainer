@@ -19,6 +19,7 @@ std::vector<sf::Keyboard::Key> keybind = {
     sf::Keyboard::LShift, // hold
     sf::Keyboard::F4, // restart
     sf::Keyboard::F2, // config
+    sf::Keyboard::Z,
 };
 
 std::vector<sf::Time> timing = {

@@ -14,6 +14,7 @@ int main()
 	// sf::Texture texture;
 	// texture.loadFromFile("resources/blockskin.png");
 
+    write_config();
     read_config();
 
     init_board();
@@ -37,6 +38,7 @@ int main()
                 if(event.key.code == get_keybind(Keybind::rot_cw)) rotate_piece(1);
                 if(event.key.code == get_keybind(Keybind::swap)) swap_piece();
                 if(event.key.code == get_keybind(Keybind::reset)) reset();
+                if(event.key.code == get_keybind(Keybind::undo)) undo();
             }
             if (event.type == sf::Event::Resized) {
                 // resize my view

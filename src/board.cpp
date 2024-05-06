@@ -1,3 +1,4 @@
+#include "board.hpp"
 #include "types.hpp"
 #include "const.hpp"
 #include "queue.hpp"
@@ -7,6 +8,7 @@
 const int N = row_number;
 const int M = column_number;
 Board B(N + 3, std::vector<int>(M, -1));
+int swap_state = 0;
 
 Tiles get_dis(int c, int rotation){ // get displacement
 
@@ -128,6 +130,7 @@ struct Piece{
 
 void init_piece(int c){
     current_piece = {0, 3, c, 0};
+    if(!current_piece.valid()) reset();
     current_piece.put();
 }
 
@@ -223,17 +226,50 @@ void clear_lines(){
     }
 }
 
+struct State{
+    int cp, hp;
+    Board B;
+};
+
+std::deque<State> backups;
 void hard_drop(){
+    current_piece.take();
+    backups.push_front({current_piece.t, hold_piece.t, B});
+    current_piece.put();
+    while((int)backups.size() > 500) backups.pop_back();
+
     while(move_piece(3));
     clear_lines();
     init_piece(get_piece());
+
+    swap_state = 0;
+}
+
+void undo(){
+    if(backups.empty()) return;
+    if(swap_state){
+        std::swap(current_piece, hold_piece);
+        swap_state = 0;
+    }
+    current_piece.take();
+    put_queue({current_piece.t});
+    State last = backups.front();
+    backups.pop_front();
+
+    current_piece.t = last.cp;
+    hold_piece.t = last.hp;
+    B = last.B;
+    init_piece(current_piece.t);
 }
 
 void swap_piece(){
     current_piece.take();
+    
     std::swap(current_piece, hold_piece);
     if(current_piece.t == -1) current_piece.t = get_piece();
     init_piece(current_piece.t);
+
+    swap_state ^= 1;
 }
 
 int get_hold_piece(){
