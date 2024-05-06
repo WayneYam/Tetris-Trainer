@@ -1,45 +1,25 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include "settings.h"
-#include "element.h"
-#include "interactable_manager.h"
-#include "button.h"
+#include "draw.hpp"
+#include "board.hpp"
+#include "config.hpp"
+#include "motion.hpp"
+#include "queue.hpp"
+
+void reset(){
+    reset_board();
+    reset_queue(); 
+    init_board();
+}
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(600, 800), "SFML works!");
+    window.setKeyRepeatEnabled(false);
 
+	// sf::Texture texture;
+	// texture.loadFromFile("resources/blockskin.png");
 
-	std::function<void(InteractableManager::Interactable*)> setBlue{
-		[](InteractableManager::Interactable* ptr) -> void {
-			ptr->setColor(sf::Color::Blue);
-		}
-	};
-
-	std::function<void(InteractableManager::Interactable*)> setRed{
-		[](InteractableManager::Interactable* ptr) -> void {
-			ptr->setColor(sf::Color::Red);
-		}
-	};
-	
-
-	std::shared_ptr<Button> testButton = std::make_shared<Button>("Test", InteractableManager::Interactable::nullAction , InteractableManager::Interactable::nullAction, InteractableManager::Interactable::nullAction, setBlue, setRed, 10);
-
-	InteractableManager manager;
-
-	manager.addObj(testButton);
-
-	sf::Texture texture;
-
-	texture.loadFromFile("resources/blockskin.png");
-
-	testButton->setTexture(texture);
-	testButton->setTextureRect(sf::IntRect(0, 0, 31, 31));
-	
-	testButton->setScale(10, 10);
-	testButton->setPosition(50.0, 50.0);
+    init_board();
 
     while (window.isOpen())
     {
@@ -48,14 +28,32 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased){
+                for(int i = 0; i < (int)config::motion.size(); i++){
+                    if(event.key.code == config::motion[i]) {
+                        motion_register(i, (event.type == sf::Event::KeyPressed ? 1 : -1)); 
+                    }
+                }
+            }
+            if (event.type == sf::Event::KeyPressed){
+                if(event.key.code == config::keybind[0]) hard_drop();
+                if(event.key.code == config::keybind[1]) rotate_piece(3);
+                if(event.key.code == config::keybind[2]) rotate_piece(2);
+                if(event.key.code == config::keybind[3]) rotate_piece(1);
+                if(event.key.code == config::keybind[4]) swap_piece();
+                if(event.key.code == config::keybind[5]) reset();
+            }
         }
 
-        window.clear();
+        do_motion();
 
-		window.draw(*testButton);
-		sf::Vector2i globalPosition = sf::Mouse::getPosition(window);
-		
-		manager.update(sf::Vector2f(globalPosition.x, globalPosition.y));
+        window.clear();
+        Board board = getBoard();
+
+        draw_board(window, board);
+        sf::sleep(sf::Time(sf::seconds(0.1)));
+       
+
         window.display();
     }
 
