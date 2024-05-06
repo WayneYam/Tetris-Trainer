@@ -18,7 +18,7 @@ void motion_register(Keybind t, int s){
     if(s == 1) status[(int)t].second.restart();
 }
 
-void do_motion(){
+void do_motion(){ // there's actually no ARR and SDD support yet :(
     if(status[1].first == 1 && status[1].second.getElapsedTime() > get_timing(Timing::SDD)){
         if(get_timing(Timing::ARR) == sf::Time(sf::milliseconds(0))){
             while(move_piece(3));

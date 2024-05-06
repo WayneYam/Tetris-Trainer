@@ -245,6 +245,12 @@ void reset_board(){
     current_piece = hold_piece = Piece();
 }
 
+void reset(){
+    reset_board();
+    reset_queue(); 
+    init_board();
+}
+
 Board getBoard(){
     return B;
 }

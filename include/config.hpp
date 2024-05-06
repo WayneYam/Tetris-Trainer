@@ -31,6 +31,10 @@ sf::Keyboard::Key get_keybind(Keybind k);
 sf::Time get_timing(Timing t);
 int get_option(Option o);
 
+void set_keybind(Keybind k, sf::Keyboard::Key K);
+void set_timing(Timing t, sf::Time T);
+void set_option(Option o, int x);
+
 void write_config();
 void read_config();
 

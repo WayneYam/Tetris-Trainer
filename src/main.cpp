@@ -3,18 +3,13 @@
 #include "board.hpp"
 #include "config.hpp"
 #include "motion.hpp"
-#include "queue.hpp"
 
-void reset(){
-    reset_board();
-    reset_queue(); 
-    init_board();
-}
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(600, 800), "Tetris Trainer");
     window.setKeyRepeatEnabled(false);
+    sf::View view = window.getDefaultView();
 
 	// sf::Texture texture;
 	// texture.loadFromFile("resources/blockskin.png");
@@ -42,6 +37,15 @@ int main()
                 if(event.key.code == get_keybind(Keybind::rot_cw)) rotate_piece(1);
                 if(event.key.code == get_keybind(Keybind::swap)) swap_piece();
                 if(event.key.code == get_keybind(Keybind::reset)) reset();
+            }
+            if (event.type == sf::Event::Resized) {
+                // resize my view
+                view.setSize({
+                    static_cast<float>(event.size.width),
+                    static_cast<float>(event.size.height)
+                });
+                window.setView(view);
+                // and align shape
             }
         }
 
