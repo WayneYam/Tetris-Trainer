@@ -14,8 +14,9 @@ int main()
 	// sf::Texture texture;
 	// texture.loadFromFile("resources/blockskin.png");
 
-    write_config();
-    read_config();
+    if(!read_config()){
+        read_config_from_user(window);
+    }
 
     init_board();
 
@@ -60,6 +61,8 @@ int main()
 
         window.display();
     }
+
+    write_config();
 
     return 0;
 }

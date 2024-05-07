@@ -1,6 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
@@ -37,7 +38,8 @@ void set_timing(Timing t, sf::Time T);
 void set_option(Option o, int x);
 
 void write_config();
-void read_config();
+bool read_config();
+void read_config_from_user(sf::RenderWindow &window);
 
 namespace config{
 const int motion_num = 3; // only the first three do we care about long press
