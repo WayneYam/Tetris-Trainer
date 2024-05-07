@@ -71,7 +71,7 @@ int get_option(Option o) {return option[(int)o];}
 
 void write_config(){
     std::ofstream myfile;
-    myfile.open ("config/config.txt");
+    myfile.open ("config.txt");
     for(auto x : motion) myfile << (int)x << ' '; 
     myfile << '\n';
     for(auto x : keybind) myfile << (int)x << ' '; 
@@ -129,7 +129,7 @@ void read_config_from_user(sf::RenderWindow &window){
 }
 
 bool read_config(){
-    std::ifstream myfile("config/config.txt");
+    std::ifstream myfile("config.txt");
 
     for(int i = 0; i < (int)motion.size(); i++){
         int x;

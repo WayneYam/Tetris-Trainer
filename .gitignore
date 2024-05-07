@@ -3,3 +3,4 @@
 *.d
 output/
 compile-flags.txt
+config.txt
