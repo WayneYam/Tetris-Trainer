@@ -2,5 +2,5 @@
 *.o
 *.d
 output/
-compile-flags.txt
+compile_flags.txt
 config.txt
