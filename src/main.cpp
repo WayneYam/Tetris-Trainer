@@ -4,7 +4,6 @@
 #include "config.hpp"
 #include "motion.hpp"
 
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(600, 800), "Tetris Trainer");

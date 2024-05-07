@@ -17,5 +17,8 @@ void init_board();
 void swap_piece();
 int get_hold_piece();
 
+void garbage_gen();
+int garbage_count();
+bool tspin_check();
 #endif
 

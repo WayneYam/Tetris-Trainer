@@ -4,11 +4,23 @@
 #include "queue.hpp"
 #include "config.hpp"
 #include <utility>
-
 const int N = row_number;
 const int M = column_number;
 Board B(N + 3, std::vector<int>(M, -1));
 int swap_state = 0;
+
+//for garbage line generate
+#include <random>
+double garbage_chaos=0.5;
+int garbage_pos=0;
+std::default_random_engine generator( time(NULL) );
+std::uniform_real_distribution<float> real_distribution(0.0, 1.0);
+std::uniform_int_distribution<int> int_distribution(0,M-1);
+int garbage=0;
+//for garbage line sent
+int clear_line_count;
+int combo=-1;
+bool is_tspin;
 
 Tiles get_dis(int c, int rotation){ // get displacement
 
@@ -216,6 +228,9 @@ void clear_lines(){
         bool full = 1;
         for(int i = 0; i < M; i++) if(B[cur][i] == -1) full = 0;
         if(full){
+            //for garbage sent
+            clear_line_count++;
+            //
             for(int i = cur - 1; i >= 0; i--){
                 B[i + 1] = B[i];
             }
@@ -239,7 +254,15 @@ void hard_drop(){
     while((int)backups.size() > 500) backups.pop_back();
 
     while(move_piece(3));
+    //
+    is_tspin=tspin_check();
+    //
     clear_lines();
+    //
+    //oppo_garbage+=garbage_count();
+    garbage+=garbage_count();
+    garbage_gen();
+    //
     init_piece(get_piece());
 
     swap_state = 0;
@@ -287,6 +310,67 @@ void reset(){
     init_board();
 }
 
+
+//
+void garbage_gen(){//generate garbage line
+	while(garbage>0){
+		float x=real_distribution(generator);
+		if(x<garbage_chaos){
+			garbage_pos=garbage_pos;
+		}
+		else{
+			garbage_pos=int_distribution(generator);
+		}
+		for(int k=0+3;k<N-1+3;k++){
+			B[k]=B[k+1];
+		}
+		for(int k=0;k<M;k++){
+			if(k!=garbage_pos) B[N+2][k]=7;
+			else B[N+2][k]=-1;
+		}
+		garbage--;
+	}
+}
+int garbage_count(){//calculate how many line you sent, there's not btb yet
+	int l=clear_line_count;
+	clear_line_count=0;
+	if(l==0){
+		combo=-1;
+		return 0;
+	}
+	combo++;
+	int basic,btb;
+	//atk=(basic+b2b)(1+combo*0.25)
+	if(is_tspin) basic=2*l;
+	else if(l==4) basic=4;
+	else basic=l-1;
+	btb=0;
+	if(basic+btb==0){
+		if(combo<2) return 0;
+		if(combo<6) return 1;
+		if(combo<16) return 2;
+		return 3;
+	}
+	return (basic+btb)*(4+combo)/4;
+}
+bool tspin_check(){//there's not tspin mini yet
+	if(current_piece.t!=6) return 0;
+	current_piece.px += 0, current_piece.py += -1;
+	if(current_piece.valid()){
+		current_piece.px -= 0, current_piece.py -= -1;
+		return 0;
+	}
+	current_piece.px -= 0, current_piece.py -= -1;
+	int x=current_piece.px,y=current_piece.py,temp=0;
+	if(valid_position(x,y)) temp++;
+	if(valid_position(x+2,y)) temp++;
+	if(valid_position(x,y+2)) temp++;
+	if(valid_position(x+2,y+2)) temp++;
+	if(temp<2) return 1;
+	return 0;
+}
+
+//
 Board getBoard(){
     return B;
 }
