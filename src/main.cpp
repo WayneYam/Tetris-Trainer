@@ -57,6 +57,7 @@ int main()
         draw_board(window);
         draw_queue(window);
         draw_hold_piece(window);
+        draw_data(window);
 
         window.display();
     }

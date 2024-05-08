@@ -26,6 +26,7 @@ const sf::Vector2f pos(150, 150);
 const sf::Color grid(64, 64, 64);
 
 
+
 sf::Color get_color(int c){
     if(0 <= c && c < (int)color_list.size()) return color_list[c];
     return sf::Color(0, 0, 0);
@@ -112,4 +113,9 @@ void draw_hold_piece(sf::RenderWindow &window){
     if(t != -1) draw_piece(window, t, hold_position, piece_size);
 }
 
-
+void draw_data(sf::RenderWindow &window){
+    sf::Font font;
+    font.loadFromFile("resources/arial.ttf");
+    sf::Text text("total spike", font, 30);
+    window.draw(text);
+}

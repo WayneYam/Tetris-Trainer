@@ -10,18 +10,11 @@ Board B(N + 3, std::vector<int>(M, -1));
 int swap_state = 0;
 
 //for garbage line generate
+int total_spike=0;
 #include <random>
-double garbage_chaos=0.5;
-int garbage_pos=0;
 std::default_random_engine generator( time(NULL) );
 std::uniform_real_distribution<float> real_distribution(0.0, 1.0);
 std::uniform_int_distribution<int> int_distribution(0,M-1);
-int garbage=0;
-//for garbage line sent
-int clear_line_count;
-int combo=-1;
-bool is_tspin;
-
 Tiles get_dis(int c, int rotation){ // get displacement
 
     std::vector<std::vector<Tiles>> table = 
@@ -139,7 +132,100 @@ struct Piece{
     }
 
 } current_piece, hold_piece;
-
+struct Player{
+	int piece;
+	int spike;
+	float time;
+	float app;
+	float apm;
+	int spike_pos;//garbage hole's position
+	int line;//how many line you clear;
+	int combo;
+	int btb_count;
+	int garbage_line[100];
+	float garbage_chaos=0.4;
+	int index_start;
+	int index_end;
+	bool is_tspin;
+	void init(){
+		total_spike=0;
+		piece=0;
+		spike=0;
+		time=0;
+		app=0;
+		apm=0;
+		index_start=0;
+		index_end=0;
+		combo=-1;
+		btb_count=-1;
+		spike_pos=int_distribution(generator);
+	}
+	int spike_count(){
+			int l=line;
+			line=0;
+			if(l==0){
+					combo=-1;
+					return 0;
+			}
+			combo++;
+			int basic,btb;
+			//atk=(basic+b2b)(1+combo*0.25)
+			if(is_tspin){
+				basic=2*l;
+				btb_count++;
+			}
+			else if(l==4){
+				basic=4;
+				btb_count++;
+			}
+			else{
+				basic=l-1;
+				btb_count=-1;
+			}
+			if(btb_count<1) btb=0;
+			else if(btb_count<3) btb=1;
+			else if(btb_count<8) btb=2;
+			else if(btb_count<24) btb=3;
+			else if(btb_count<67) btb=4;
+			else btb=5;
+			if(basic+btb==0){
+					if(combo<2) return 0;
+					if(combo<6) return 1;
+					if(combo<16) return 2;
+					return 3;
+			}
+			return (basic+btb)*(4+combo)/4;
+	}
+	void garbage_gen(){
+			while(index_start!=index_end){
+					float x=real_distribution(generator);
+					int n=garbage_line[index_start];
+					if(x>garbage_chaos){
+							spike_pos=spike_pos;
+					}
+					else{
+							spike_pos=int_distribution(generator);
+					}
+					for(int k=0+3;k<N-n+3;k++){
+							B[k]=B[k+n];
+					}
+					for(int k=0;k<M;k++){
+						for(int j=0;j<n;j++){
+							if(k!=spike_pos) B[N+2-j][k]=7;
+							else B[N+2-j][k]=-1;
+						}
+					}
+					index_start=(index_start+1)%100;
+			}
+	}
+	void update(){
+		piece++;
+		garbage_line[index_end]=spike_count();
+		total_spike+=garbage_line[index_end];
+		index_end=(index_end+1)%100;
+		garbage_gen();
+	}
+}player;
 void init_piece(int c){
     current_piece = {0, 3, c, 0};
     if(!current_piece.valid()) reset();
@@ -229,7 +315,7 @@ void clear_lines(){
         for(int i = 0; i < M; i++) if(B[cur][i] == -1) full = 0;
         if(full){
             //for garbage sent
-            clear_line_count++;
+            player.line++;
             //
             for(int i = cur - 1; i >= 0; i--){
                 B[i + 1] = B[i];
@@ -254,15 +340,9 @@ void hard_drop(){
     while((int)backups.size() > 500) backups.pop_back();
 
     while(move_piece(3));
-    //
-    is_tspin=tspin_check();
-    //
+    player.is_tspin=tspin_check();
     clear_lines();
-    //
-    //oppo_garbage+=garbage_count();
-    garbage+=garbage_count();
-    garbage_gen();
-    //
+	player.update();
     init_piece(get_piece());
 
     swap_state = 0;
@@ -312,55 +392,18 @@ void reset(){
 
 
 //
-void garbage_gen(){//generate garbage line
-	while(garbage>0){
-		float x=real_distribution(generator);
-		if(x<garbage_chaos){
-			garbage_pos=garbage_pos;
-		}
-		else{
-			garbage_pos=int_distribution(generator);
-		}
-		for(int k=0+3;k<N-1+3;k++){
-			B[k]=B[k+1];
-		}
-		for(int k=0;k<M;k++){
-			if(k!=garbage_pos) B[N+2][k]=7;
-			else B[N+2][k]=-1;
-		}
-		garbage--;
-	}
-}
-int garbage_count(){//calculate how many line you sent, there's not btb yet
-	int l=clear_line_count;
-	clear_line_count=0;
-	if(l==0){
-		combo=-1;
-		return 0;
-	}
-	combo++;
-	int basic,btb;
-	//atk=(basic+b2b)(1+combo*0.25)
-	if(is_tspin) basic=2*l;
-	else if(l==4) basic=4;
-	else basic=l-1;
-	btb=0;
-	if(basic+btb==0){
-		if(combo<2) return 0;
-		if(combo<6) return 1;
-		if(combo<16) return 2;
-		return 3;
-	}
-	return (basic+btb)*(4+combo)/4;
-}
+
 bool tspin_check(){//there's not tspin mini yet
 	if(current_piece.t!=6) return 0;
-	current_piece.px += 0, current_piece.py += -1;
+	current_piece.take();
+	current_piece.px += -1, current_piece.py += 0;
 	if(current_piece.valid()){
-		current_piece.px -= 0, current_piece.py -= -1;
+		current_piece.px -= -1, current_piece.py -= 0;
+		current_piece.put();
 		return 0;
 	}
-	current_piece.px -= 0, current_piece.py -= -1;
+	current_piece.px -= -1, current_piece.py -= 0;
+	current_piece.put();
 	int x=current_piece.px,y=current_piece.py,temp=0;
 	if(valid_position(x,y)) temp++;
 	if(valid_position(x+2,y)) temp++;
