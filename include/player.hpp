@@ -22,7 +22,6 @@ struct Player{
     std::queue<int> garbage;
 	int spike_count(Lineclear l);
 	void garbage_gen();
-	void update(Lineclear l);
     Board getBoard();
 
     std::vector<std::pair<int, sf::Clock> > hold_time;

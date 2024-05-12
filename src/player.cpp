@@ -82,14 +82,8 @@ void Player::garbage_gen() {
         }
     }
 }
-void Player::update(Lineclear l) {
-    piece++;
-    if(int dam = spike_count(l); dam) garbage.push(dam);
-    garbage_gen();
-}
 
 Board Player::getBoard() { return B; }
-
 bool Player::move_left() {return B.move_piece(2);}
 bool Player::move_down() {return B.move_piece(3);}
 bool Player::move_right() {return B.move_piece(0);}
@@ -99,7 +93,20 @@ bool Player::rot_cw() {return B.rotate_piece(1);}
 
 void Player::hard_drop(){
     auto ret = B.hard_drop();
-    update(ret);
+    piece++;
+    int dam = spike_count(ret);
+    // cancellation
+    if(dam){
+        while(!garbage.empty() && dam >= garbage.front() ){
+            dam -= garbage.front();
+            garbage.pop();
+        }
+        if(!garbage.empty()) garbage.front() -= dam;
+    }
+    garbage.push(dam);
+    if(ret.lines == 0){
+        garbage_gen();
+    }
     if(B.init_piece(B.queue.get_piece())) reset();
 }
 
