@@ -2,9 +2,8 @@
 #define DRAW_H
 
 #include <SFML/Graphics.hpp>
+#include "player.hpp"
 
-void draw_board(sf::RenderWindow &window);
-void draw_queue(sf::RenderWindow &window);
-void draw_hold_piece(sf::RenderWindow &window);
+void draw_player(sf::RenderWindow &window, Player &P);
 void draw_data(sf::RenderWindow &window);
 #endif
