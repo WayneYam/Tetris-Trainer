@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include "draw.hpp"
-#include "board.hpp"
 #include "config.hpp"
 #include "debug.hpp"
 #include "player.hpp"
@@ -36,7 +35,6 @@ int main()
                 window.setView(view);
             }
         }
-
         P.do_motion();
         window.clear();
         draw_player(window, P);

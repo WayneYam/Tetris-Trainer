@@ -157,10 +157,11 @@ bool Board::valid(Piece p){
     return 1;
 }
 
-void Board::init_piece(int c){
+int Board::init_piece(int c){
     current_piece = {N+2, 3, c, 0};
-    if(!valid(current_piece)) reset();
+    if(!valid(current_piece)) return 1;
     put(current_piece);
+    return 0;
 }
 
 void Board::init_board(){
@@ -190,13 +191,13 @@ bool Board::rotate_piece(int cnt){
     Tiles test = get_rot_table(current_piece.t, cr, nr);
     current_piece.rot = nr;
     for(auto [dx, dy] : test){
-        current_piece.px -= dy;
+        current_piece.px += dy;
         current_piece.py += dx;
         if(valid(current_piece)){
             put(current_piece);
             return 1;
         }
-        current_piece.px += dy;
+        current_piece.px -= dy;
         current_piece.py -= dx;
     }
 
@@ -217,9 +218,9 @@ bool Board::tspin_check(){//there's not tspin mini yet
 	put(current_piece);
 	int x=current_piece.px,y=current_piece.py,temp=0;
 	if(valid_position(x,y)) temp++;
-	if(valid_position(x+2,y)) temp++;
+	if(valid_position(x-2,y)) temp++;
 	if(valid_position(x,y+2)) temp++;
-	if(valid_position(x+2,y+2)) temp++;
+	if(valid_position(x-2,y+2)) temp++;
 	if(temp<2) return 1;
 	return 0;
 }
@@ -257,7 +258,6 @@ Lineclear Board::hard_drop(){
             if(!valid_position(i, j)) ret.is_pc = 0;
         }
     }
-    init_piece(queue.get_piece());
     swap_state = 0;
 
     return ret;

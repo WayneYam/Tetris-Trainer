@@ -3,6 +3,7 @@
 
 #include <SFML/Window/Event.hpp>
 #include <ctime>
+#include <queue>
 #include <random>
 #include "board.hpp"
 #include "config.hpp"
@@ -12,17 +13,16 @@ struct Player{
     std::uniform_int_distribution<int> int_distribution;
     Board B;
 	float time, app, apm;
-	int piece, spike, spike_pos, line;
+	int piece, spike, spike_pos;
 	int combo, btb_count;
-	int garbage_line[100];
 	float garbage_chaos=0.4;
-	int index_start, index_end;
-	bool is_tspin;
 
 	Player(int n, int m);
-	int spike_count();
+
+    std::queue<int> garbage;
+	int spike_count(Lineclear l);
 	void garbage_gen();
-	void update();
+	void update(Lineclear l);
     Board getBoard();
 
     std::vector<std::pair<int, sf::Clock> > hold_time;

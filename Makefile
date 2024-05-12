@@ -68,7 +68,7 @@ OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 all: $(OUTPUT) $(MAIN)
 	@echo Executing 'all' complete!
 
-debug: CXXFLAGS += -DDEBUG 
+debug: CXXFLAGS += -DDEBUG -fsanitize=address,undefined
 debug: $(OUTPUT) $(MAIN)
 	@echo Executing 'debug' complete!
 

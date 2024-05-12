@@ -29,7 +29,7 @@ struct Board : public std::vector<std::vector<int> > {
     void put(Piece p);
     void take(Piece p);
     bool valid(Piece p);
-    void init_piece(int c);
+    int init_piece(int c);
     void init_board();
     bool move_piece(int dir);
     bool rotate_piece(int cnt); 

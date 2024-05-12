@@ -1,44 +1,44 @@
 #include "player.hpp"
 
+#include <algorithm>
 #include <ctime>
 #include <random>
 
 #include "board.hpp"
 #include "config.hpp"
+#include "debug.hpp"
 
 // for garbage line generate
-int total_spike = 0;
 std::default_random_engine generator(time(NULL));
 
 Player::Player(int n, int m)
     : real_distribution(0.0, 1.0), int_distribution(0, m - 1), B(n, m), hold_time(config::motion_num){
-    total_spike = piece = spike = time = app = apm = index_start = index_end =
+    piece = spike = time = app = apm =
         0;
     combo = btb_count = -1;
     spike_pos = int_distribution(generator);
     B.init_board();
 }
 
-int Player::spike_count() {
-    int l = line;
-    line = 0;
-    if (l == 0) {
+int Player::spike_count(Lineclear l) {
+    if (l.lines == 0) {
         combo = -1;
-        return 0;
+        return 0 + l.is_pc * 10;
     }
     combo++;
     int basic, btb;
     // atk=(basic+b2b)(1+combo*0.25)
-    if (is_tspin) {
-        basic = 2 * l;
+    if (l.tspin) {
+        basic = 2 * l.lines;
         btb_count++;
-    } else if (l == 4) {
+    } else if (l.lines == 4) {
         basic = 4;
         btb_count++;
     } else {
-        basic = l - 1;
+        basic = l.lines - 1;
         btb_count = -1;
     }
+
     if (btb_count < 1)
         btb = 0;
     else if (btb_count < 3)
@@ -52,17 +52,18 @@ int Player::spike_count() {
     else
         btb = 5;
     if (basic + btb == 0) {
-        if (combo < 2) return 0;
-        if (combo < 6) return 1;
-        if (combo < 16) return 2;
-        return 3;
+        if (combo < 2) return 0 + l.is_pc * 10;
+        if (combo < 6) return 1 + l.is_pc * 10;
+        if (combo < 16) return 2 + l.is_pc * 10;
+        return 3 + l.is_pc * 10;
     }
-    return (basic + btb) * (4 + combo) / 4;
+    return std::max((basic + btb) * (4 + combo) / 4 + l.is_pc * 10, 0);
 }
 void Player::garbage_gen() {
-    while (index_start != index_end) {
+    while (!garbage.empty()) {
         float x = real_distribution(generator);
-        int n = garbage_line[index_start];
+        int n = garbage.front();
+        garbage.pop();
         if (x > garbage_chaos) {
             // spike_pos = spike_pos;
         } else {
@@ -79,14 +80,11 @@ void Player::garbage_gen() {
                     B[j][k] = -1;
             }
         }
-        index_start = (index_start + 1) % 100;
     }
 }
-void Player::update() {
+void Player::update(Lineclear l) {
     piece++;
-    garbage_line[index_end] = spike_count();
-    total_spike += garbage_line[index_end];
-    index_end = (index_end + 1) % 100;
+    if(int dam = spike_count(l); dam) garbage.push(dam);
     garbage_gen();
 }
 
@@ -100,7 +98,9 @@ bool Player::rot_180() {return B.rotate_piece(2);}
 bool Player::rot_cw() {return B.rotate_piece(1);}
 
 void Player::hard_drop(){
-    B.hard_drop();
+    auto ret = B.hard_drop();
+    update(ret);
+    if(B.init_piece(B.queue.get_piece())) reset();
 }
 
 void Player::swap(){
@@ -113,6 +113,9 @@ void Player::undo(){
 
 void Player::reset(){
     B.reset();
+    piece = spike = time = app = apm =
+        0;
+    combo = btb_count = -1;
 }
 
 
