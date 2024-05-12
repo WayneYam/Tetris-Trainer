@@ -1,9 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <SFML/Window/Event.hpp>
 #include <ctime>
 #include <random>
 #include "board.hpp"
+#include "config.hpp"
 
 struct Player{
     std::uniform_real_distribution<float> real_distribution;
@@ -22,6 +24,11 @@ struct Player{
 	void garbage_gen();
 	void update();
     Board getBoard();
+
+    std::vector<std::pair<int, sf::Clock> > hold_time;
+    void event_handler(sf::Event e);
+    void motion_register(Keybind k, int status);
+    void do_motion();
 
     bool move_left();
     bool move_down();

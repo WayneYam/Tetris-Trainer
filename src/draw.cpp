@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <vector>
 
@@ -113,6 +114,11 @@ void draw_board(sf::RenderWindow &window, Board board){
 
 }
 
+void draw_player(sf::RenderWindow& window, Player &P){
+    draw_board(window, P.B);
+    draw_queue(window, P.B.queue);
+    draw_hold_piece(window, P.B.hold_piece.t);
+}
 
 void draw_data(sf::RenderWindow &window){
     sf::Font font;

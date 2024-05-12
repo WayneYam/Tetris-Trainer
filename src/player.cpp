@@ -4,19 +4,21 @@
 #include <random>
 
 #include "board.hpp"
+#include "config.hpp"
 
 // for garbage line generate
 int total_spike = 0;
 std::default_random_engine generator(time(NULL));
 
 Player::Player(int n, int m)
-    : real_distribution(0.0, 1.0), int_distribution(0, m - 1), B(n, m) {
+    : real_distribution(0.0, 1.0), int_distribution(0, m - 1), B(n, m), hold_time(config::motion_num){
     total_spike = piece = spike = time = app = apm = index_start = index_end =
         0;
     combo = btb_count = -1;
     spike_pos = int_distribution(generator);
     B.init_board();
 }
+
 int Player::spike_count() {
     int l = line;
     line = 0;
@@ -112,3 +114,5 @@ void Player::undo(){
 void Player::reset(){
     B.reset();
 }
+
+
