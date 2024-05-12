@@ -102,7 +102,7 @@ Tiles get_rot_table (int t, int cr, int nr) {
 
 
 
-Board::Board (int n, int m) : N(n), M(m), std::vector<std::vector<int> > (n * 2, std::vector<int>(m, -1)) {};
+Board::Board (int n, int m) : std::vector<std::vector<int> > (n * 2, std::vector<int>(m, -1)), N(n), M(m) {};
 Board::Piece::Piece () {px = py = t = rot = -1;}
 Board::Piece::Piece(int a, int b, int c, int d){ px = a, py = b, t = c, rot = d; }
 
@@ -224,14 +224,13 @@ bool Board::tspin_check(){//there's not tspin mini yet
 	return 0;
 }
 
-void Board::clear_lines(){
+int Board::clear_lines(){
+    int res = 0;
     for(int cur = 0; cur < N + 2;){
         bool full = 1;
         for(int i = 0; i < M; i++) if((*this)[cur][i] == -1) full = 0;
         if(full){
-            //for garbage sent
-            // player.line++;
-            //
+            res++;
             for(int i = cur; i < N + 2; i++){
                 (*this)[i] = (*this)[i + 1];
             }
@@ -240,20 +239,28 @@ void Board::clear_lines(){
             cur++;
         }
     }
+    return res;
 }
-void Board::hard_drop(){
+Lineclear Board::hard_drop(){
     take(current_piece);
     backups.push_front({current_piece.t, hold_piece.t, (*this)});
     put(current_piece);
     while((int)backups.size() > 500) backups.pop_back();
 
     while(move_piece(3));
-    // player.is_tspin=tspin_check();
-    clear_lines();
-    // player.update();
+    Lineclear ret;
+    ret.tspin= tspin_check();
+    ret.lines = clear_lines();
+    ret.is_pc = 1;
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < M; j++){
+            if(!valid_position(i, j)) ret.is_pc = 0;
+        }
+    }
     init_piece(queue.get_piece());
-
     swap_state = 0;
+
+    return ret;
 }
 
 void Board::undo(){
@@ -269,7 +276,7 @@ void Board::undo(){
 
     current_piece.t = last.cp;
     hold_piece.t = last.hp;
-    (std::vector<std::vector<int> >)(*this) = last.B;
+    for(int i = 0; i < (int)last.B.size(); i++) (*this)[i] = last.B[i];
     init_piece(current_piece.t);
 }
 
@@ -298,118 +305,3 @@ void Board::reset(){
 }
 
 
-
-const int N = row_number;
-const int M = column_number;
-
-
-
-// struct Player{
-//     Board B(N, M);
-// 	int piece;
-// 	int spike;
-// 	float time;
-// 	float app;
-// 	float apm;
-// 	int spike_pos;//garbage hole's position
-// 	int line;//how many line you clear;
-// 	int combo;
-// 	int btb_count;
-// 	int garbage_line[100];
-// 	float garbage_chaos=0.4;
-// 	int index_start;
-// 	int index_end;
-// 	bool is_tspin;
-// 	void init(){
-// 		total_spike=0;
-// 		piece=0;
-// 		spike=0;
-// 		time=0;
-// 		app=0;
-// 		apm=0;
-// 		index_start=0;
-// 		index_end=0;
-// 		combo=-1;
-// 		btb_count=-1;
-// 		spike_pos=int_distribution(generator);
-// 	}
-// 	int spike_count(){
-// 			int l=line;
-// 			line=0;
-// 			if(l==0){
-// 					combo=-1;
-// 					return 0;
-// 			}
-// 			combo++;
-// 			int basic,btb;
-// 			//atk=(basic+b2b)(1+combo*0.25)
-// 			if(is_tspin){
-// 				basic=2*l;
-// 				btb_count++;
-// 			}
-// 			else if(l==4){
-// 				basic=4;
-// 				btb_count++;
-// 			}
-// 			else{
-// 				basic=l-1;
-// 				btb_count=-1;
-// 			}
-// 			if(btb_count<1) btb=0;
-// 			else if(btb_count<3) btb=1;
-// 			else if(btb_count<8) btb=2;
-// 			else if(btb_count<24) btb=3;
-// 			else if(btb_count<67) btb=4;
-// 			else btb=5;
-// 			if(basic+btb==0){
-// 					if(combo<2) return 0;
-// 					if(combo<6) return 1;
-// 					if(combo<16) return 2;
-// 					return 3;
-// 			}
-// 			return (basic+btb)*(4+combo)/4;
-// 	}
-// 	void garbage_gen(){
-// 			while(index_start!=index_end){
-// 					float x=real_distribution(generator);
-// 					int n=garbage_line[index_start];
-// 					if(x>garbage_chaos){
-// 							spike_pos=spike_pos;
-// 					}
-// 					else{
-// 							spike_pos=int_distribution(generator);
-// 					}
-// 					for(int k=0+3;k<N-n+3;k++){
-// 							B[k]=B[k+n];
-// 					}
-// 					for(int k=0;k<M;k++){
-// 						for(int j=0;j<n;j++){
-// 							if(k!=spike_pos) B[N+2-j][k]=7;
-// 							else B[N+2-j][k]=-1;
-// 						}
-// 					}
-// 					index_start=(index_start+1)%100;
-// 			}
-// 	}
-// 	void update(){
-// 		piece++;
-// 		garbage_line[index_end]=spike_count();
-// 		total_spike+=garbage_line[index_end];
-// 		index_end=(index_end+1)%100;
-// 		garbage_gen();
-// 	}
-//     Board getBoard(){
-//         return B;
-//     }
-// }player;
-//
-//
-//
-// //for garbage line generate
-// int total_spike=0;
-// #include <random>
-// std::default_random_engine generator( time(NULL) );
-// std::uniform_real_distribution<float> real_distribution(0.0, 1.0);
-// std::uniform_int_distribution<int> int_distribution(0,M-1);
-//
-//

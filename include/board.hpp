@@ -34,8 +34,8 @@ struct Board : public std::vector<std::vector<int> > {
     bool move_piece(int dir);
     bool rotate_piece(int cnt); 
     bool tspin_check();
-    void clear_lines();
-    void hard_drop();
+    int clear_lines();
+    Lineclear hard_drop();
     void undo();
     void swap_piece();
     int get_hold_piece();
