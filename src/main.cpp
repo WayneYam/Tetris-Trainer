@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "debug.hpp"
 #include "player.hpp"
+#include "mode.hpp"
 
 int main()
 {
@@ -17,7 +18,7 @@ int main()
         read_config_from_user(window);
     }
 
-    Player P(20, 10);
+    PlayerCheese P(20, 10);
 
     while (window.isOpen())
     {

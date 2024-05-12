@@ -9,10 +9,9 @@
 #include "debug.hpp"
 
 // for garbage line generate
-std::default_random_engine generator(time(NULL));
 
 Player::Player(int n, int m)
-    : real_distribution(0.0, 1.0), int_distribution(0, m - 1), B(n, m), hold_time(config::motion_num){
+    : real_distribution(0.0, 1.0), int_distribution(0, m - 1), generator(time(NULL)), B(n, m), hold_time(config::motion_num){
     piece_count = attack_count =
         0;
     combo = btb_count = -1;
@@ -104,7 +103,6 @@ void Player::hard_drop(){
         }
         if(!garbage.empty()) garbage.front() -= dam;
     }
-    garbage.push(dam);
     attack_count += dam;
     if(ret.lines == 0){
         garbage_gen();
