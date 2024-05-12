@@ -5,5 +5,4 @@
 #include "player.hpp"
 
 void draw_player(sf::RenderWindow &window, Player &P, sf::Vector2f pos, float sz = 1);
-void draw_data(sf::RenderWindow &window);
 #endif

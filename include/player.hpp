@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <ctime>
 #include <queue>
@@ -12,8 +13,8 @@ struct Player{
     std::uniform_real_distribution<float> real_distribution;
     std::uniform_int_distribution<int> int_distribution;
     Board B;
-	float time, app, apm;
-	int piece, spike, spike_pos;
+    sf::Clock clock;
+	int piece_count, attack_count, spike_pos;
 	int combo, btb_count;
 	float garbage_chaos=0.4;
 

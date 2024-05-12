@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <iomanip>
+#include <string>
 #include <vector>
 
 #include "draw.hpp"
@@ -125,16 +127,35 @@ void draw_damage(sf::RenderWindow& window, std::queue<int> q, sf::Vector2f pos, 
     }
 }
 
+void draw_data(sf::RenderWindow &window, Player &P, sf::Vector2f pos, float size){
+    sf::Font font;
+    font.loadFromFile("resources/arial.ttf");
+    {
+        std::stringstream s1;
+        s1 << std::fixed << std::setprecision(2) << "Pieces: " << P.piece_count << " (" << P.piece_count / P.clock.getElapsedTime().asSeconds() << ")";
+        sf::Text text1(s1.str(), font, size * 15);
+        text1.setPosition(pos);
+        text1.move({text1.getGlobalBounds().width * -1, 0});
+        window.draw(text1);
+        pos.y += size * 30;
+    }
+    {
+        std::stringstream s1;
+        s1 << std::fixed << std::setprecision(2) << "Attack: " << P.attack_count << " (" << P.attack_count * 60 / P.clock.getElapsedTime().asSeconds() << ")";
+        sf::Text text1(s1.str(), font, size * 15);
+        text1.setPosition(pos);
+        text1.move({text1.getGlobalBounds().width * -1, 0});
+        window.draw(text1);
+        pos.y += size * 30;
+
+    }
+}
+
 void draw_player(sf::RenderWindow& window, Player &P, sf::Vector2f pos, float size){
     draw_board(window, P.B, {pos.x + 100 * size, pos.y}, size);
     draw_queue(window, P.B.queue, {pos.x + (100 + 30 * P.B.M + 25) * size, pos.y - (30 * P.B.N) * size}, size);
     draw_hold_piece(window, P.B.hold_piece.t, {pos.x, pos.y - 12 * 30 * size}, size);
     draw_damage(window, P.garbage, {pos.x + 90 * size, pos.y}, size);
+    draw_data(window, P, {pos.x + 80 * size, pos.y - 8 * 30 * size}, size);
 }
 
-void draw_data(sf::RenderWindow &window){
-    sf::Font font;
-    font.loadFromFile("resources/arial.ttf");
-    sf::Text text("total spike", font, 30);
-    window.draw(text);
-}

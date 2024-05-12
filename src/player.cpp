@@ -13,10 +13,11 @@ std::default_random_engine generator(time(NULL));
 
 Player::Player(int n, int m)
     : real_distribution(0.0, 1.0), int_distribution(0, m - 1), B(n, m), hold_time(config::motion_num){
-    piece = spike = time = app = apm =
+    piece_count = attack_count =
         0;
     combo = btb_count = -1;
     spike_pos = int_distribution(generator);
+    clock.restart();
     B.init_board();
 }
 
@@ -93,7 +94,7 @@ bool Player::rot_cw() {return B.rotate_piece(1);}
 
 void Player::hard_drop(){
     auto ret = B.hard_drop();
-    piece++;
+    piece_count++;
     int dam = spike_count(ret);
     // cancellation
     if(dam){
@@ -104,6 +105,7 @@ void Player::hard_drop(){
         if(!garbage.empty()) garbage.front() -= dam;
     }
     garbage.push(dam);
+    attack_count += dam;
     if(ret.lines == 0){
         garbage_gen();
     }
@@ -120,9 +122,11 @@ void Player::undo(){
 
 void Player::reset(){
     B.reset();
-    piece = spike = time = app = apm =
+    piece_count = attack_count = 
         0;
     combo = btb_count = -1;
+    clock.restart();
+    while(garbage.size()) garbage.pop();
 }
 
 
