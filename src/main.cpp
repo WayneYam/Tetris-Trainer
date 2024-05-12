@@ -3,6 +3,7 @@
 #include "board.hpp"
 #include "config.hpp"
 #include "motion.hpp"
+#include "debug.hpp"
 
 int main()
 {
@@ -17,7 +18,8 @@ int main()
         read_config_from_user(window);
     }
 
-    init_board();
+    Board B(20, 10);
+    B.init_board();
 
     while (window.isOpen())
     {
@@ -29,16 +31,16 @@ int main()
             if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased){
                 int status = event.type == sf::Event::KeyPressed ? 1 : -1;
                 for (Keybind motion : {Keybind::move_left, Keybind::move_right, Keybind::soft_drop})
-                    if(event.key.code == get_keybind(motion)) motion_register(motion, status);
+                    if(event.key.code == get_keybind(motion)) motion_register(motion, status, B);
             }
             if (event.type == sf::Event::KeyPressed){
-                if(event.key.code == get_keybind(Keybind::hard_drop)) hard_drop();
-                if(event.key.code == get_keybind(Keybind::rot_ccw)) rotate_piece(3);
-                if(event.key.code == get_keybind(Keybind::rot_180)) rotate_piece(2);
-                if(event.key.code == get_keybind(Keybind::rot_cw)) rotate_piece(1);
-                if(event.key.code == get_keybind(Keybind::swap)) swap_piece();
-                if(event.key.code == get_keybind(Keybind::reset)) reset();
-                if(event.key.code == get_keybind(Keybind::undo)) undo();
+                if(event.key.code == get_keybind(Keybind::hard_drop))  B.hard_drop();
+                if(event.key.code == get_keybind(Keybind::rot_ccw))    B.rotate_piece(3);
+                if(event.key.code == get_keybind(Keybind::rot_180))    B.rotate_piece(2);
+                if(event.key.code == get_keybind(Keybind::rot_cw))     B.rotate_piece(1);
+                if(event.key.code == get_keybind(Keybind::swap))       B.swap_piece();
+                if(event.key.code == get_keybind(Keybind::reset))      B.reset();
+                if(event.key.code == get_keybind(Keybind::undo))       B.undo();
             }
             if (event.type == sf::Event::Resized) {
                 // resize my view
@@ -51,13 +53,13 @@ int main()
             }
         }
 
-        do_motion();
+        do_motion(B);
 
         window.clear();
-        draw_board(window);
-        draw_queue(window);
-        draw_hold_piece(window);
-        draw_data(window);
+        draw_board(window, B);
+        draw_queue(window, B.queue);
+        draw_hold_piece(window, B.get_hold_piece());
+        // draw_data(window);
 
         window.display();
     }
