@@ -23,7 +23,6 @@ const std::vector<sf::Color> color_list {
 };
 
 const int N = row_number, M = column_number; // board row/column
-const int sz = 30;
 const sf::Vector2f pos(150, 750);
 const sf::Color grid(64, 64, 64);
 
@@ -56,11 +55,10 @@ void draw_piece(sf::RenderWindow &window, int t, sf::Vector2f pos, float size){
     }
 }
 
-void draw_queue(sf::RenderWindow &window, Queue Q){
+void draw_queue(sf::RenderWindow &window, Queue Q, sf::Vector2f queue_position, float size){
     auto queue = Q.get_queue();
 
-    sf::Vector2f queue_position(475, 150);
-    float piece_size = 80;
+    float piece_size = 80 * size;
 
     for(int i = 0; i < 5; i++){
         auto current_position = queue_position;
@@ -69,17 +67,17 @@ void draw_queue(sf::RenderWindow &window, Queue Q){
     }
 }
 
-void draw_hold_piece(sf::RenderWindow &window, int t){
+void draw_hold_piece(sf::RenderWindow &window, int t, sf::Vector2f hold_position, float size){
 
-    sf::Vector2f hold_position(50, 400);
-    float piece_size = 80;
+    float piece_size = 80 * size;
 
     // int t = get_hold_piece();
     if(t != -1) draw_piece(window, t, hold_position, piece_size);
 }
 
-void draw_board(sf::RenderWindow &window, Board board){
+void draw_board(sf::RenderWindow &window, Board board, sf::Vector2f pos, float size){
 
+    float sz = 30 * size;
     // draw row line
     for(int i = 0; i <= board.N; i++){
         sf::VertexArray lines(sf::LinesStrip, 2);
@@ -114,10 +112,10 @@ void draw_board(sf::RenderWindow &window, Board board){
 
 }
 
-void draw_player(sf::RenderWindow& window, Player &P){
-    draw_board(window, P.B);
-    draw_queue(window, P.B.queue);
-    draw_hold_piece(window, P.B.hold_piece.t);
+void draw_player(sf::RenderWindow& window, Player &P, sf::Vector2f pos, float size){
+    draw_board(window, P.B, {pos.x + 100 * size, pos.y}, size);
+    draw_queue(window, P.B.queue, {pos.x + (100 + 30 * P.B.M + 25) * size, pos.y - (30 * P.B.N) * size}, size);
+    draw_hold_piece(window, P.B.hold_piece.t, {pos.x, pos.y - 12 * 30 * size}, size);
 }
 
 void draw_data(sf::RenderWindow &window){

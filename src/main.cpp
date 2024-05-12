@@ -37,7 +37,7 @@ int main()
         }
         P.do_motion();
         window.clear();
-        draw_player(window, P);
+        draw_player(window, P, {50, 750}, 1);
         window.display();
     }
 
