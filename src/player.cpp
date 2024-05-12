@@ -122,8 +122,7 @@ void Player::undo(){
 
 void Player::reset(){
     B.reset();
-    piece_count = attack_count = 
-        0;
+    piece_count = attack_count = 0;
     combo = btb_count = -1;
     clock.restart();
     while(garbage.size()) garbage.pop();
