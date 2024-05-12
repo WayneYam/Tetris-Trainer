@@ -227,12 +227,12 @@ bool Board::tspin_check(){//there's not tspin mini yet
 
 int Board::clear_lines(){
     int res = 0;
-    for(int cur = 0; cur < N + 2;){
+    for(int cur = 0; cur < 2 * N;){
         bool full = 1;
         for(int i = 0; i < M; i++) if((*this)[cur][i] == -1) full = 0;
         if(full){
             res++;
-            for(int i = cur; i < N + 2; i++){
+            for(int i = cur; i < 2 * N - 1; i++){
                 (*this)[i] = (*this)[i + 1];
             }
             for(int &i : (*this).back()) i = -1;

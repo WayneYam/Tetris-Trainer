@@ -109,13 +109,27 @@ void draw_board(sf::RenderWindow &window, Board board, sf::Vector2f pos, float s
             window.draw(cur);
         }
     }
+}
 
+void draw_damage(sf::RenderWindow& window, std::queue<int> q, sf::Vector2f pos, float size){
+    float sz = 30;
+    while(!q.empty()){
+        int n = q.front(); 
+        q.pop();
+        if(n == 0) continue;
+        sf::RectangleShape cur(sf::Vector2f(5 * size, (sz * n - 3) * size));
+        cur.setPosition(pos.x, pos.y - (sz * n - 3) * size); 
+        pos.y -= sz * n * size;
+        cur.setFillColor(sf::Color::Red);
+        window.draw(cur);
+    }
 }
 
 void draw_player(sf::RenderWindow& window, Player &P, sf::Vector2f pos, float size){
     draw_board(window, P.B, {pos.x + 100 * size, pos.y}, size);
     draw_queue(window, P.B.queue, {pos.x + (100 + 30 * P.B.M + 25) * size, pos.y - (30 * P.B.N) * size}, size);
     draw_hold_piece(window, P.B.hold_piece.t, {pos.x, pos.y - 12 * 30 * size}, size);
+    draw_damage(window, P.garbage, {pos.x + 90 * size, pos.y}, size);
 }
 
 void draw_data(sf::RenderWindow &window){
