@@ -12,6 +12,7 @@
 struct Player{
     std::uniform_real_distribution<float> real_distribution;
     std::uniform_int_distribution<int> int_distribution;
+    std::default_random_engine generator;
     Board B;
     sf::Clock clock;
 	int piece_count, attack_count, spike_pos;
@@ -21,25 +22,25 @@ struct Player{
 	Player(int n, int m);
 
     std::queue<int> garbage;
-	int spike_count(Lineclear l);
-	void garbage_gen();
+	virtual int spike_count(Lineclear l);
+	virtual void garbage_gen();
     Board getBoard();
 
     std::vector<std::pair<int, sf::Clock> > hold_time;
-    void event_handler(sf::Event e);
-    void motion_register(Keybind k, int status);
-    void do_motion();
+    virtual void event_handler(sf::Event e);
+    virtual void motion_register(Keybind k, int status);
+    virtual void do_motion();
 
-    bool move_left();
-    bool move_down();
-    bool move_right();
-    void hard_drop();
-    bool rot_ccw();
-    bool rot_180();
-    bool rot_cw();
-    void reset();
-    void swap();
-    void undo();
+    virtual bool move_left();
+    virtual bool move_down();
+    virtual bool move_right();
+    virtual void hard_drop();
+    virtual bool rot_ccw();
+    virtual bool rot_180();
+    virtual bool rot_cw();
+    virtual void reset();
+    virtual void swap();
+    virtual void undo();
 };
 
 
