@@ -270,9 +270,11 @@ void Board::undo(){
         swap_state = 0;
     }
     take(current_piece);
-    queue.put_queue({current_piece.t});
     State last = backups.front();
     backups.pop_front();
+
+    if(last.hp == -1 && hold_piece.t != -1) debug(hold_piece.t), queue.put_queue({hold_piece.t});
+    queue.put_queue({current_piece.t});
 
     current_piece.t = last.cp;
     hold_piece.t = last.hp;

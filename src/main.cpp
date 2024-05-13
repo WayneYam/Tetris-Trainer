@@ -19,7 +19,7 @@ int main()
         read_config_from_user(window);
     }
 
-    PlayerCheese P(20, 10);
+    Player P(20, 10);
 
     while (window.isOpen())
     {
