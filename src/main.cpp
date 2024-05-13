@@ -9,6 +9,7 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(600, 800), "Tetris Trainer");
     window.setKeyRepeatEnabled(false);
+    window.setFramerateLimit(240);
     sf::View view = window.getDefaultView();
 
 	// sf::Texture texture;
