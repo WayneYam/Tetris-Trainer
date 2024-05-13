@@ -4,6 +4,7 @@
 #include "debug.hpp"
 #include "player.hpp"
 #include "mode.hpp"
+#include "ai.hpp"
 
 int main()
 {
@@ -18,7 +19,7 @@ int main()
         read_config_from_user(window);
     }
 
-    PlayerCheese P(20, 10);
+    PlayerAI P(20, 10);
 
     while (window.isOpen())
     {
