@@ -8,12 +8,16 @@
 #include <queue>
 #include "debug.hpp"
 
+int autoplay = 0;
+
 PlayerAI::PlayerAI(int n, int m) : Player(n, m) {reset();}
 // Disable movement
 void PlayerAI::event_handler(sf::Event event){
     if (event.type == sf::Event::KeyPressed){
         if(event.key.code == get_keybind(Keybind::reset))      reset();
         if(event.key.code == get_keybind(Keybind::hard_drop))  hard_drop();
+        if(event.key.code == get_keybind(Keybind::undo))       undo();
+        if(event.key.code == sf::Keyboard::P)  autoplay ^= 1;
     }
 }
 
@@ -34,7 +38,7 @@ int eval(const Board &B){
     for(int i = 0; i < 2 * B.N - 1; i++){
         for(int j = 0; j < B.M; j++) {
             if(is_solid(B[i+1][j]) && !is_solid(B[i][j])) { // has to tuck
-                evaluation -= 100;
+                evaluation -= 1000;
             }
         }
     }
@@ -43,7 +47,7 @@ int eval(const Board &B){
     for(int i = 1; i < 2 * B.N - 1; i++){
         for(int j = 0; j < B.M; j++) {
             if(is_solid(B[i+1][j]) && !is_solid(B[i][j]) && (i == 1 || is_solid(B[i-1][j])) && (i == B.M - 1 || is_solid(B[i+1][j])) ) { // has hole
-                evaluation -= 1000;
+                evaluation -= 3000;
             }
         }
     }
@@ -79,7 +83,9 @@ int eval(const Board &B){
 
     evaluation -= 3 * (stack_top - stack_bottom);
     for(int i = 1; i < B.M - 1; i++){
-        evaluation -= std::abs(height[i] - height[i+1]) * std::abs(height[i] - height[i+1]);
+        int base_penalty = std::abs(height[i] - height[i+1]) * std::abs(height[i] - height[i+1]);
+        int edge_penalty = (B.M * B.M / 2) - (i - 1) * (B.M - 1 - i);
+        evaluation -=  base_penalty * base_penalty * edge_penalty / 5;
     }
     // debug(evaluation);
 
@@ -169,9 +175,9 @@ void PlayerAI::hard_drop(){
 }
 
 void PlayerAI::do_motion(){
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){
+    if(autoplay){
         place_a_piece();
-        sf::sleep(sf::seconds(0.1));
+        // sf::sleep(sf::seconds(0.1));
     }
 }
 
