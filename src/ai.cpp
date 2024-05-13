@@ -27,63 +27,7 @@ bool is_solid(int x){
     return 0 <= x && x < 7;
 }
 int eval(const Board &B){
-    int evaluation = 100;
-
-    // for(auto i : B) debug(i);
-    // tuck test
-    for(int i = 0; i < 2 * B.N - 1; i++){
-        for(int j = 0; j < B.M; j++) {
-            if(is_solid(B[i+1][j]) && !is_solid(B[i][j])) { // has to tuck
-                evaluation -= 100;
-            }
-        }
-    }
-
-    // hole test
-    for(int i = 1; i < 2 * B.N - 1; i++){
-        for(int j = 0; j < B.M; j++) {
-            if(is_solid(B[i+1][j]) && !is_solid(B[i][j]) && (i == 1 || is_solid(B[i-1][j])) && (i == B.M - 1 || is_solid(B[i+1][j])) ) { // has hole
-                evaluation -= 1000;
-            }
-        }
-    }
-
-    // find the stack height
-    std::vector<int> height(B.M);
-    for(int i = 0; i < B.M; i++){
-        for(int j = 0;;j++){
-            if(!is_solid(B[j][i])){
-                height[i] = j;
-                break;
-            }
-        }
-    }
-
-
-    int stack_top = *std::max_element(height.begin() + 1, height.end());
-    int stack_bottom = *std::min_element(height.begin() + 1, height.end());
-    // don't cover the well
-    {
-        int tmp = 0;
-        for(int i = 0; i < 2 * B.N; i++){
-            tmp += is_solid(B[i][0]);
-        }
-        // debug(tmp, height);
-        if(tmp == 0) {}
-        else if(tmp < 4) evaluation -= 10000;
-        else if(tmp == 4 && (stack_bottom < 4)) evaluation -= 10000;
-        else evaluation += 50; // clear the tetris
-    }
-
-    // prefer flat placement
-
-    evaluation -= 3 * (stack_top - stack_bottom);
-    for(int i = 1; i < B.M - 1; i++){
-        evaluation -= std::abs(height[i] - height[i+1]) * std::abs(height[i] - height[i+1]);
-    }
-    // debug(evaluation);
-
-    return evaluation;
+    return 0;
 }
 
 void PlayerAI::place_a_piece(){
