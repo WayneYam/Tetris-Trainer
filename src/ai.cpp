@@ -72,14 +72,14 @@ int eval(const Board &B){
         if(tmp == 0) {}
         else if(tmp < 4) evaluation -= 10000;
         else if(tmp == 4 && (stack_bottom < 4)) evaluation -= 10000;
-        else evaluation += 1000; // clear the tetris
+        else evaluation += 50; // clear the tetris
     }
 
     // prefer flat placement
 
     evaluation -= 3 * (stack_top - stack_bottom);
     for(int i = 1; i < B.M - 1; i++){
-        evaluation -= std::abs(height[i] - height[i+1]);
+        evaluation -= std::abs(height[i] - height[i+1]) * std::abs(height[i] - height[i+1]);
     }
     // debug(evaluation);
 
