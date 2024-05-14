@@ -246,6 +246,7 @@ Lineclear Board::hard_drop(){
     take(current_piece);
     backups.push_front({current_piece.t, hold_piece.t, (*this)});
     put(current_piece);
+    if(swap_state) std::swap(backups.front().cp, backups.front().hp);
     while((int)backups.size() > 500) backups.pop_back();
 
     while(move_piece(3));
@@ -266,8 +267,7 @@ Lineclear Board::hard_drop(){
 void Board::undo(){
     if(backups.empty()) return;
     if(swap_state){
-        std::swap(current_piece, hold_piece);
-        swap_state = 0;
+        swap_piece();
     }
     take(current_piece);
     State last = backups.front();
