@@ -30,7 +30,7 @@ template<class T> inline void pary(T l, T r) {
 	std::cerr << std::endl;
 }
 #else
-#define debug(x...)
+#define debug(x...) (void)0
 template<class T> inline void pary(T l, T r) {}
 #endif
 
