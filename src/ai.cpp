@@ -23,6 +23,7 @@ void PlayerAI::event_handler(sf::Event event){
 
 void PlayerAI::reset(){
     // debug("called reset");
+    std::cout << "put " << piece_count << " piececs\n";
     Player::reset();
     Player::swap();
 }
