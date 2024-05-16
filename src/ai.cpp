@@ -25,6 +25,7 @@ void PlayerAI::event_handler(sf::Event event){
 void PlayerAI::reset(){
     // debug("called reset");
     std::cout << "put " << piece_count << " pieces\n";
+    sf::sleep(sf::seconds(1));
     Player::reset();
     Player::swap();
 }
@@ -88,11 +89,34 @@ int eval(std::vector<int> v){
         if(i > 2) evaluation -= 200;
     }
 
-    for(int i = 1; i + 2 < (int)v.size(); i++){
+    int spikiness = 0;
+
+    for(int i = 1; i + 2 < (int)v.size(); i++){ // flat board
         int diff = std::abs(v[i] - v[i+1]);
+        if(diff) spikiness ++;
         evaluation -= diff * diff * 3;
         // evaluation -= diff * 5;
     }
+
+    if(spikiness > 3) evaluation -= 4;
+    if(spikiness > 4) evaluation -= 8;
+    if(spikiness > 5) evaluation -= 12;
+    if(spikiness > 6) evaluation -= 16;
+
+    {
+        int mxheight = *max_element(v.begin() + 1, v.end() - 1);
+        int mnheight = *min_element(v.begin() + 1, v.end() - 1);
+
+        if(mxheight - mnheight > 3) evaluation -= 10;
+        if(mxheight - mnheight > 4) evaluation -= 30;
+        if(mxheight - mnheight > 5) evaluation -= 50;
+        if(mxheight - mnheight > 6) evaluation -= 70;
+    }
+
+    if(v[1] < v[2]) evaluation -= 15;
+    if(v[1] > v[2]) evaluation += 5;
+    if(v[v.size() - 2] < v[v.size() - 3]) evaluation -= 15;
+    if(v[v.size() - 2] > v[v.size() - 3]) evaluation -= 5;
 
     return evaluation;
 }
