@@ -8,6 +8,7 @@
 #include <queue>
 #include "debug.hpp"
 
+int autoplay = 0;
 PlayerAI::PlayerAI(int n, int m) : Player(n, m) {reset();}
 // Disable movement
 void PlayerAI::event_handler(sf::Event event){
@@ -15,6 +16,7 @@ void PlayerAI::event_handler(sf::Event event){
         if(event.key.code == get_keybind(Keybind::reset))      reset();
         if(event.key.code == get_keybind(Keybind::hard_drop))  hard_drop();
         if(event.key.code == get_keybind(Keybind::undo))       undo();
+        if(event.key.code == sf::Keyboard::P) autoplay ^= 1;
     }
 }
 
@@ -120,9 +122,8 @@ void PlayerAI::hard_drop(){
 }
 
 void PlayerAI::do_motion(){
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::P)){
+    if(autoplay) {
         place_a_piece();
-        sf::sleep(sf::seconds(0.1));
     }
 }
 
