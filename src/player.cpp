@@ -21,6 +21,7 @@ Player::Player(int n, int m)
 }
 
 int Player::spike_count(Lineclear l) {
+    return l.lines;
     if (l.lines == 0) {
         combo = -1;
         return 0 + l.is_pc * 10;

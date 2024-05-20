@@ -14,20 +14,30 @@ int autoplay = 0;
 PlayerAI::PlayerAI(int n, int m) : Player(n, m) {reset();}
 // Disable movement
 void PlayerAI::event_handler(sf::Event event){
+    if(autoplay){
+        if (event.type == sf::Event::KeyPressed){
+            if(event.key.code == get_keybind(Keybind::reset))      reset();
+            if(event.key.code == get_keybind(Keybind::hard_drop))  hard_drop();
+            if(event.key.code == get_keybind(Keybind::undo))       undo();
+        }
+    }else{
+        Player::event_handler(event);
+    }
     if (event.type == sf::Event::KeyPressed){
-        if(event.key.code == get_keybind(Keybind::reset))      reset();
-        if(event.key.code == get_keybind(Keybind::hard_drop))  hard_drop();
-        if(event.key.code == get_keybind(Keybind::undo))       undo();
         if(event.key.code == sf::Keyboard::P) autoplay ^= 1;
     }
 }
 
 void PlayerAI::reset(){
     // debug("called reset");
-    std::cout << "put " << piece_count << " pieces\n";
+    std::cout << "cleared " << attack_count << " lines\n";
     sf::sleep(sf::seconds(1));
-    Player::reset();
-    Player::swap();
+    if(autoplay){
+        undo();
+    }else{
+        Player::reset();
+        Player::swap();
+    }
 }
 
 bool is_solid(int x){
@@ -80,30 +90,55 @@ int eval(std::vector<int> v){
 
     int dsum = std::accumulate(dependency.begin(), dependency.end(), 0);
 
+    // don't want too many dependencies
     if(dsum > 1) evaluation -= 10;
     if(dsum > 2) evaluation -= 20;
     if(dsum > 3) evaluation -= 30;
 
+    // especially don't want dependency of the same type
     for(int i : dependency){
         if(i > 1) evaluation -= 50;
         if(i > 2) evaluation -= 200;
     }
+    if(dependency[4]) evaluation -= 50;
+
+    // parity
+    {
+        int par = 0;
+        for(int i = 1; i < (int)v.size() - 1; i++){
+            if(v[i] & 1){
+                if(i & 1) par--;
+                else par++;
+            }
+        }
+        par = std::abs(par);
+        if(par > 3) evaluation -= 50;
+        if(par > 5) evaluation -= 120;
+        if(par > 7) evaluation -= 190;
+    }
 
     int spikiness = 0;
-
     for(int i = 1; i + 2 < (int)v.size(); i++){ // flat board
-        int diff = std::abs(v[i] - v[i+1]);
+        int diff = std::min(std::abs(v[i] - v[i+1]), 8);
         if(diff) spikiness ++;
         evaluation -= diff * diff * 3;
         // evaluation -= diff * 5;
     }
 
     if(spikiness > 3) evaluation -= 4;
-    if(spikiness > 4) evaluation -= 8;
-    if(spikiness > 5) evaluation -= 12;
-    if(spikiness > 6) evaluation -= 16;
+    if(spikiness > 4) evaluation -= 12;
+    if(spikiness > 5) evaluation -= 20;
+    if(spikiness > 6) evaluation -= 28;
 
-    {
+    int s_piece = 0, z_piece = 0, o_piece = 0;
+    for(int i = 1; i + 2 < (int)v.size(); i++){ // place for s, z, o
+        if (v[i] - v[i+1] ==  1) z_piece = 1;
+        if (v[i] - v[i+1] ==  0) o_piece = 1;
+        if (v[i] - v[i+1] == -1) s_piece = 1;
+    }
+    evaluation += 30 * (s_piece + z_piece) + 20 * o_piece;
+
+    { // range of board should be low
         int mxheight = *max_element(v.begin() + 1, v.end() - 1);
         int mnheight = *min_element(v.begin() + 1, v.end() - 1);
 
@@ -113,10 +148,11 @@ int eval(std::vector<int> v){
         if(mxheight - mnheight > 6) evaluation -= 70;
     }
 
-    if(v[1] < v[2]) evaluation -= 15;
+    // edge should be higher
+    if(v[1] < v[2]) evaluation -= 5;
     if(v[1] > v[2]) evaluation += 5;
-    if(v[v.size() - 2] < v[v.size() - 3]) evaluation -= 15;
-    if(v[v.size() - 2] > v[v.size() - 3]) evaluation -= 5;
+    if(v[v.size() - 2] < v[v.size() - 3]) evaluation -= 5;
+    if(v[v.size() - 2] > v[v.size() - 3]) evaluation += 5;
 
     return evaluation;
 }
@@ -133,7 +169,7 @@ void PlayerAI::place_a_piece(){
     std::set<Board::Piece, comp> visited;
 
     Board::Piece best_placement;
-    int best_eval = -1;
+    int best_eval = -1000000000;
 
     std::queue<Board::Piece> bfs_queue;
     Board B2 = B;
@@ -221,12 +257,28 @@ void PlayerAI::place_a_piece(){
 
 
 void PlayerAI::hard_drop(){
-    place_a_piece();
+    if(B.current_piece.px == B.N + 2 && B.current_piece.py == 3){ // didn't move
+        place_a_piece();
+    }else{
+        Player::hard_drop();
+        std::vector<int> height(B.M);
+        for(int i = 0; i < B.M; i++){
+            for(int j = 0; j < 2 * B.N; j++){
+                if(!is_solid(B[j][i])){
+                    height[i] = j;
+                    break;
+                }
+            }
+        }
+        debug(eval(height));
+    }
 }
 
 void PlayerAI::do_motion(){
     if(autoplay) {
         place_a_piece();
+    }else{
+        Player::do_motion();
     }
 }
 
